@@ -4,6 +4,10 @@ use diesel::SqliteConnection;
 use diesel_async::{AsyncConnection, sync_connection_wrapper::SyncConnectionWrapper};
 use tokio::sync::Mutex;
 
+pub mod models;
+pub mod repository;
+pub mod schema;
+
 pub struct Database {
     connection: Arc<Mutex<SyncConnectionWrapper<SqliteConnection>>>,
 }
