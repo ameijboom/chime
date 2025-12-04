@@ -1,3 +1,0 @@
-DROP TABLE IF EXISTS event_members;
-DROP TABLE IF EXISTS members;
-DROP TABLE IF EXISTS events;
