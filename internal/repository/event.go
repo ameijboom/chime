@@ -1,4 +1,4 @@
-package database
+package repository
 
 func (e *Event) MaxSize() int {
 	switch *e.PartyType {
@@ -6,7 +6,7 @@ func (e *Event) MaxSize() int {
 		return 8
 	case Light:
 		return 4
+	default:
+		return 0
 	}
-
-	return 0
 }

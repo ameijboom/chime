@@ -1,8 +1,13 @@
-package database
+package repository
 
 import (
 	"gorm.io/gorm"
 )
+
+var Models = []any{
+	&Event{},
+	&Attendee{},
+}
 
 type EventStatus string
 type PartyType string
@@ -23,18 +28,18 @@ const (
 
 type Event struct {
 	gorm.Model
-	Id        uint64
-	MessageId uint64
+	GuildEventID uint64
+	MessageID    uint64
 
 	Status    EventStatus
 	PartyType *PartyType
 
-	Members []EventMember `gorm:"foreignKey:EventID"`
+	Members []Attendee `gorm:"foreignKey:EventID"`
 }
 
-type EventMember struct {
+type Attendee struct {
 	gorm.Model
-	EventID uint64
+	EventID uint
 	UserID  uint64
 	Role    *JobRole
 }
