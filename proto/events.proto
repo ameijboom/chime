@@ -1,0 +1,48 @@
+syntax = "proto3";
+package events;
+
+option go_package = "/generated";
+
+import "google/protobuf/timestamp.proto";
+
+service Events {
+    rpc CreateScheduledEvent (CreateScheduledEventReqeuest) returns (CreateScheduledEventResponse) {}
+}
+
+enum ScheduledEventStatus {
+    ONGOING = 0;
+    ENDED = 1;
+    ONHOLD = 2;
+}
+
+enum ScheduledEventPartyType {
+    LIGHT = 0;
+    FULL = 1;
+}
+
+enum ScheduledEventMemberJobRole {
+    TANK = 0;
+    HEALER = 1;
+    DPS = 2;
+}
+
+enum ScheduledEventFrequency {
+    DAILY = 0;
+    WEEKLY = 1;
+    BIWEEKLY = 2;
+    MONTHLY = 3;
+}
+
+message CreateScheduledEventReqeuest {
+    string Title = 1;
+    string Description = 2;
+    ScheduledEventStatus Status = 3;
+    optional ScheduledEventPartyType Type = 4;
+    optional ScheduledEventFrequency Recurring = 5;
+    google.protobuf.Timestamp StartTime = 6;
+    google.protobuf.Timestamp EndTime = 7;
+}
+
+message CreateScheduledEventResponse {
+    string ID = 1;
+}
