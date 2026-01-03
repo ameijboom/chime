@@ -1,0 +1,71 @@
+"""Bazel module for chime"""
+module(name = "chime")
+
+rust_version = "1.88.0"
+
+bazel_dep(name = "rules_oci", version = "2.2.6")
+bazel_dep(name = "rules_pkg", version = "1.1.0")
+bazel_dep(name = "rules_rust", version = "0.65.0")
+bazel_dep(name = "rules_foreign_cc", version = "0.15.1")
+bazel_dep(name = "toolchains_llvm", version = "1.5.0")
+bazel_dep(name = "chrome-linux-sysroot", version = "0.0.3")
+bazel_dep(name = "platforms", version = "1.0.0")
+bazel_dep(name = "protobuf", version = "29.0", repo_name = "com_google_protobuf")
+
+llvm = use_extension("@toolchains_llvm//toolchain/extensions:llvm.bzl", "llvm")
+llvm.toolchain(
+    name = "llvm_toolchain",
+    llvm_version = "16.0.0"
+)
+llvm.sysroot(
+    name = "llvm_toolchain",
+    label = "@@chrome-linux-sysroot++_repo_rules+debian_bullseye_amd64//:sysroot",
+    targets = ["linux-x86_64"],
+)
+llvm.sysroot(
+    name = "llvm_toolchain",
+    label = "@@chrome-linux-sysroot++_repo_rules+debian_bullseye_arm64//:sysroot",
+    targets = ["linux-aarch64"],
+)
+use_repo(llvm, "llvm_toolchain")
+
+oci = use_extension("@rules_oci//oci:extensions.bzl", "oci")
+oci.pull(
+    name = "distroless",
+    digest = "sha256:620d8b11ae800f0dbd7995f89ddc5344ad603269ea98770588b1b07a4a0a6872",
+    image = "gcr.io/distroless/cc-debian12",
+    platforms = [
+        "linux/amd64",
+        "linux/arm64/v8",
+    ],
+)
+
+use_repo(oci, "distroless", "distroless_linux_amd64", "distroless_linux_arm64_v8")
+
+rust = use_extension("@rules_rust//rust:extensions.bzl", "rust")
+rust.toolchain(
+    edition = "2024",
+    versions = [rust_version],
+    extra_target_triples = [
+        "x86_64-unknown-linux-gnu",
+        "aarch64-unknown-linux-gnu"
+    ],
+)
+
+use_repo(rust, "rust_toolchains")
+
+crate = use_extension("@rules_rust//crate_universe:extension.bzl", "crate")
+crate.from_cargo(
+    name = "crates",
+    cargo_lockfile = "//api:Cargo.lock",
+    manifests = [
+        "//api:Cargo.toml",
+    ],
+)
+
+use_repo(crate, "crates")
+
+register_toolchains(
+    "@rust_toolchains//:all",
+    "@llvm_toolchain//:all",
+)
