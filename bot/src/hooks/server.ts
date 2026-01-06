@@ -15,7 +15,9 @@ export default class Hooks {
   constructor(client: Client) {
     this.express = express();
     this.express.use(express.json());
+
     this.discord = client;
+
     return this;
   }
 

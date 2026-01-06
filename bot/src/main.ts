@@ -38,7 +38,7 @@ process.on("SIGINT", () => {
   console.log("Shutting down...");
   if (server) {
     server.close(() => {
-      console.log("Webhook server closed");
+      console.log("webhook server closed");
       client.destroy();
       process.exit(0);
     });
